@@ -139,8 +139,8 @@
         const longitude = document.querySelector('.longitude');
         const latitude = document.querySelector('.latitude');
 
-        const map = L.map('mapid').setView([0, 0], 2); //setting the default map Latitude and logitude
 
+        const map = L.map('mapid').setView([0, 0], 2); //setting the default map Latitude and logitude
 
         //creating the access token and map tiles and adding it to map varible
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmlkejEwMSIsImEiOiJja2VmcXdiNzcxZWF3MnpydjJtbnFkcWExIn0.35lxBR8ndHUX2SfDZ6s1SQ', {
@@ -152,6 +152,18 @@
             accessToken: 'your.mapbox.access.token'
         }).addTo(map);
 
+        //adding custom ISS icon
+        const myIcon = L.icon({
+            iconUrl: 'icon/iss2.png',
+            iconSize: [45, 45],
+            iconAnchor: [25, 16]
+
+        });
+        const marker = L.marker([0, 0], { icon: myIcon }).addTo(map);
+
+
+        let firstTimeZoom = true;
+
         //fetching the iss data 
         async function getIssData() {
             const data = await fetch(api_url)
@@ -161,25 +173,24 @@
             latitude.textContent = json.latitude;
             longitude.textContent = json.longitude;
 
-            //adding custom ISS icon
-            const myIcon = L.icon({
-                iconUrl: 'icon/iss2.png',
-                iconSize: [45, 45],
-                iconAnchor: [2, 2]
+            //setting the current position of the ISS icon
+            marker.setLatLng([latitude.textContent, longitude.textContent]);
 
-            });
-            L.marker([latitude.textContent, longitude.textContent], { icon: myIcon }).addTo(map);
+            //setting a condition to disable zoom after one run
+            if (firstTimeZoom) {
+                map.setView([latitude.textContent, longitude.textContent], 3);
+                firstTimeZoom = false;
+            }
 
         }
 
         //updating the coordinates every 3 seconds.
-        function getDataWithInterval() {
-            setInterval(() => {
-                getIssData();
-            }, 3000)
-        }
+        setInterval(() => {
+            getIssData();
+        }, 1000)
 
-        getDataWithInterval();
+
+
 
     </script>
 </body>
