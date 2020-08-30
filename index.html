@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
+    <script src="https://kit.fontawesome.com/7d5b392920.js" crossorigin="anonymous"></script>
+
+    <title>ISS Pinpoint</title>
+    <style>
+        * {
+            box-sizing: border-box;
+
+        }
+
+        body {
+            padding: 10px 20px;
+            font-family: 'Syncopate', sans-serif;
+            background-color: #b3cdd1;
+            background-image: linear-gradient(315deg, #b3cdd1 0%, #9fa4c4 74%);
+            min-height: 100vh;
+            background-color: #9fa4c4;
+            background-image: linear-gradient(315deg, #9fa4c4 0%, #9e768f 74%);
+            background-color: #7f5a83;
+            background-image: linear-gradient(315deg, #7f5a83 0%, #0d324d 74%);
+
+
+        }
+
+        h1 {
+            color: white;
+            font-weight: 900;
+            position: relative;
+            transition: 0.3s ease all;
+            margin: 15px 0;
+
+        }
+
+        h4 {
+            color: rgb(238, 238, 238);
+        }
+
+        h1 img {
+            width: 70px;
+            height: 70px;
+
+        }
+
+        @media(max-width: 370px) {
+            h1 {
+                font-size: 27px;
+            }
+
+            h1 img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .issdetails {
+                margin-bottom: 10px;
+            }
+
+            .issdetails p {
+                margin: 0px;
+
+            }
+
+            .issdetails p span {
+                margin: 0px;
+
+            }
+        }
+
+        .issdetails {
+            background-color: lightblue;
+            border-radius: 5px;
+        }
+
+        .issdetails p {
+            padding: 10px;
+            font-weight: bolder;
+        }
+
+        .issdetails p span {
+            margin: 0 30px;
+
+        }
+
+        #mapid {
+            height: 350px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 10px;
+
+
+        }
+
+        footer a {
+            color: white;
+            transition: 0.4s ease all;
+
+        }
+
+        footer a:hover {
+            color: rgb(207, 206, 206);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>ISS PINPOINT <img src="icon/Orbital_Station-512.png" alt=""></h1>
+    <h4>*Scroll || Drag || ZoomIn - to find the Location of International Space Station*</h4>
+    </h3>
+    <div class="issdetails">
+        <p>Longitude <span class="longitude"></span></p>
+        <p>Latitude <span class="latitude"></span></p>
+    </div>
+
+    <div id="mapid"></div>
+
+    <footer>
+        <a href="http://github.com/RidhikGovind"> <i class="fab fa-github-square fa-2x"></i></a>
+        </p>
+    </footer>
+    <script>
+        const api_url = "https://api.wheretheiss.at/v1/satellites/25544";
+        const longitude = document.querySelector('.longitude');
+        const latitude = document.querySelector('.latitude');
+
+        const map = L.map('mapid').setView([0, 0], 1); //setting the default map Latitude and logitude
+
+
+        //creating the access token and map tiles and adding it to map varible
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmlkejEwMSIsImEiOiJja2VmcXdiNzcxZWF3MnpydjJtbnFkcWExIn0.35lxBR8ndHUX2SfDZ6s1SQ', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'your.mapbox.access.token'
+        }).addTo(map);
+
+        //fetching the iss data 
+        async function getIssData() {
+            const data = await fetch(api_url)
+            const json = await data.json();
+            // console.log(json)
+
+            latitude.textContent = json.latitude;
+            longitude.textContent = json.longitude;
+
+            //adding custom ISS icon
+            const myIcon = L.icon({
+                iconUrl: 'icon/iss2.png',
+                iconSize: [45, 45],
+                iconAnchor: [2, 2]
+
+            });
+            L.marker([latitude.textContent, longitude.textContent], { icon: myIcon }).addTo(map);
+
+        }
+
+        getIssData();
+
+    </script>
+</body>
+
+</html>
