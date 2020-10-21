@@ -4,4 +4,5 @@
 ### Map interactivity is made with the help of https://leafletjs.com
 #### Tech Stack: HTML, CSS and JS.
 
-[DEMO](https://iss-pinpoint.netlify.app)
+### LIVE DEMO -> 
+## https://iss-pinpoint.netlify.app
